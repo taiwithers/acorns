@@ -79,7 +79,10 @@ class ProgressBar(object):
     __repr__ = __str__
 
     def _get_progress(self, increment):
-        return float(increment * 100) / self.end
+        if self.end != 0:
+            return float(increment * 100) / self.end
+        else:
+            return 0
 
     def reset(self):
         """Resets the current progress to the start point"""
