@@ -61,6 +61,7 @@ class Acorns(object):
     def process(data, cluster_criteria, method = "PP", \
                 min_height = 0, pixel_size = 0, \
                 relax = 0, stop = 0, \
+                minnpix_cluster = None, 
                 verbose = True, interactive = False,
                 n_jobs = 1, nsteps = 1 ):
 
@@ -117,7 +118,7 @@ class Acorns(object):
 
         """
 
-#==============================================================================#
+        #==============================================================================#
         """
         Initial prep of key variables
         """
@@ -146,7 +147,10 @@ class Acorns(object):
         method = str(method)
 
         # Generate some important information:
-        self.minnpix_cluster = get_minnpix(self, pixel_size, self.cluster_criteria[0])
+        if minnpix_cluster is None:
+            self.minnpix_cluster = get_minnpix(self, pixel_size, self.cluster_criteria[0])
+        else:
+            self.minnpix_cluster = minnpix_cluster
         self.min_height = min_height
         self.max_dist = get_maxdist(self, pixel_size)
         self.cluster_criteria[0] = self.max_dist
@@ -158,7 +162,7 @@ class Acorns(object):
         self.clusters = {}
         self.forest = {}
 
-#==============================================================================#
+        #==============================================================================#
         """
         Main controlling routine for acorns
         """
@@ -273,7 +277,7 @@ class Acorns(object):
             cluster_list, cluster_indices = relax_steps(self, 0, data, method, verbose, tree, n_jobs, second_pass=True)
         endhierarchy = time.time()-starthierarchy
 
-#==============================================================================#
+        #==============================================================================#
         """
         Secondary controlling routine for acorns implemented if the linking
         criteria are relaxed by the user
@@ -309,7 +313,7 @@ class Acorns(object):
             startrelax = time.time()
             endrelax = time.time()-startrelax
 
-#==============================================================================#
+        #==============================================================================#
         """
         Tidy everything up for output
 
