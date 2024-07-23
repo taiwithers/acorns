@@ -609,7 +609,7 @@ def init_query(self, index, tree, coords, r, n_jobs, re=False):
     """
     Performs initial query of KD Tree
     """
-    idx = tree.query_ball_point(coords, r, eps = 0)#, n_jobs=n_jobs)
+    idx = tree.query_ball_point(coords, r, eps = 0, workers=n_jobs)
     # the KDtree query always returns the same point you are querying (i.e.
     # where the distance = 0), so remove this from the array.
     idx_fullarray = index
@@ -839,9 +839,9 @@ def check_other_components(self, index, current_idx, data_idx, data, _linked_clu
     # Firstly query the KDTree to find all data points within a distance = 0 of
     # the current data point
     if self.method <= 1:
-        idx = tree.query_ball_point(np.array([_coords[0,0:2]]), 0.0, eps = 0)#, n_jobs=n_jobs)
+        idx = tree.query_ball_point(np.array([_coords[0,0:2]]), 0.0, eps = 0, workers=n_jobs)
     else:
-        idx = tree.query_ball_point(np.array([_coords[0,0:3]]), 0.0, eps = 0)#, n_jobs=n_jobs)
+        idx = tree.query_ball_point(np.array([_coords[0,0:3]]), 0.0, eps = 0, workers=n_jobs)
     idx = np.array(idx[0])
 
     # Generate "bud clusters" from the multiple velocity components
@@ -1150,7 +1150,7 @@ def bud_check(self, data, cluster, linked_clusters):
                 check2 = [False]
 
             # If both of these conditions are false - merge the cluster and bud.
-            if not np.any([*check1, *check2]):
+            if not np.any(np.concatenate([check1, check2])):
                 self.clusters.pop(linked_bud.cluster_idx)
                 update_cluster_array(self, linked_bud, -1)
                 merge_into_cluster(self, data, cluster, linked_bud)
